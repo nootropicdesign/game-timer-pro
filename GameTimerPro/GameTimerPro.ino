@@ -605,7 +605,7 @@ void detonate() {
   }
 
   triggerStart = millis();
-  triggerStop = triggerStart + (config.get(DET_TRIGGER_SEC) * 1000);
+  triggerStop = triggerStart + (config.get(DET_TRIGGER_SEC) * 1000UL);
   if (triggerStop > triggerStart) {
     digitalWrite(DET_TRIGGER_PIN, HIGH);
   }
@@ -672,7 +672,7 @@ void defused() {
   }
   beep(4500, 80);
   triggerStart = millis();
-  triggerStop = triggerStart + (config.get(DEFUSE_TRIGGER_SEC) * 1000);
+  triggerStop = triggerStart + (config.get(DEFUSE_TRIGGER_SEC) * 1000UL);
   if (triggerStop > triggerStart) {
     digitalWrite(DEFUSE_TRIGGER_PIN, HIGH);
   }
