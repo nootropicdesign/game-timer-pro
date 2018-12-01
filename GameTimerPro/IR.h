@@ -8,8 +8,9 @@
 #include <WProgram.h>
 #endif
 
-#define IR_POWER 0x10EFD827 
-#define IR_A 0x10EFF807 
+// Sparkfun COM-11759
+#define IR_POWER 0x10EFD827
+#define IR_A 0x10EFF807
 #define IR_B 0x10EF7887
 #define IR_C 0x10EF58A7
 #define IR_UP 0x10EFA05F
@@ -17,6 +18,17 @@
 #define IR_LEFT 0x10EF10EF
 #define IR_RIGHT 0x10EF807F
 #define IR_SELECT 0x10EF20DF
+
+// Sparkfun COM-14865
+#define IR_POWER2 0x00FF629D
+#define IR_A2 0x00FF22DD
+#define IR_B2 0x00FF02FD
+#define IR_C2 0x00FFC23D
+#define IR_UP2 0x00FF9867
+#define IR_DOWN2 0x00FF38C7
+#define IR_LEFT2 0x00FF30CF
+#define IR_RIGHT2 0x00FF7A85
+#define IR_SELECT2 0x00FF18E7
 
 //------------------------------------------------------------------------------
 // This handles definition and access to global variables
