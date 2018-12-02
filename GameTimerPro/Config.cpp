@@ -9,38 +9,38 @@
 Config::Config(void) {
   nValues[DISP] = 2;
   keyString[DISP] = "dISP";
-  valueString[DISP] = new char* [2]{"ctdn", "cloc"};
+  valueString[DISP] = new const char* [2]{"ctdn", "cloc"};
 
   nValues[CLOCK24HR] = 2;
   keyString[CLOCK24HR] = "24hr";
-  valueString[CLOCK24HR] = new char* [2]{"On", "OFF"};
+  valueString[CLOCK24HR] = new const char* [2]{"On", "OFF"};
 
   nValues[ALARM_TIME] = 0;
   keyString[ALARM_TIME] = "AL t";
 
   nValues[ALARM_MODE] = 3;
   keyString[ALARM_MODE] = "AL";
-  valueString[ALARM_MODE] = new char* [3]{"OFF", "bEEP", "dEF"};
+  valueString[ALARM_MODE] = new const char* [3]{"OFF", "bEEP", "dEF"};
 
   nValues[TICK] = 2;
   keyString[TICK] = "tic";
-  valueString[TICK] = new char* [2]{"On", "OFF"};
+  valueString[TICK] = new const char* [2]{"On", "OFF"};
 
   nValues[DET_WIRE] = 6;
   keyString[DET_WIRE] = "dEt";
-  valueString[DET_WIRE] = new char* [6]{"nonE", "rAnd", "1   ", " 2  ", "  3 ", "   4"};
+  valueString[DET_WIRE] = new const char* [6]{"nonE", "rAnd", "1   ", " 2  ", "  3 ", "   4"};
 
   nValues[DEFUSE_WIRE] = 7;
   keyString[DEFUSE_WIRE] = "dEF";
-  valueString[DEFUSE_WIRE] = new char* [7]{"codE", "ordr", "1   ", " 2  ", "  3 ", "   4", "rAnd"};
+  valueString[DEFUSE_WIRE] = new const char* [7]{"codE", "ordr", "1   ", " 2  ", "  3 ", "   4", "rAnd"};
 
   nValues[SPEEDUP_WIRE] = 6;
   keyString[SPEEDUP_WIRE] = "2 SP";
-  valueString[SPEEDUP_WIRE] = new char* [6]{"nonE", "rAnd", "1   ", " 2  ", "  3 ", "   4"};
+  valueString[SPEEDUP_WIRE] = new const char* [6]{"nonE", "rAnd", "1   ", " 2  ", "  3 ", "   4"};
 
   nValues[PAUSE_WIRE] = 6;
   keyString[PAUSE_WIRE] = "PAUS";
-  valueString[PAUSE_WIRE] = new char* [6]{"nonE", "rAnd", "1   ", " 2  ", "  3 ", "   4"};
+  valueString[PAUSE_WIRE] = new const char* [6]{"nonE", "rAnd", "1   ", " 2  ", "  3 ", "   4"};
 
   nValues[DET_TRIGGER_SEC] = 0;
   keyString[DET_TRIGGER_SEC] = "tdEt";
@@ -53,15 +53,15 @@ Config::Config(void) {
 
   nValues[BRIGHTNESS] = 16;
   keyString[BRIGHTNESS] = "brit";
-  valueString[BRIGHTNESS] = new char* [16]{"   1", "   2", "   3", "   4", "   5", "   6", "   7", "   8", "   9", "  10", "  11", "  12", "  13", "  14", "  15", "  16"};
+  valueString[BRIGHTNESS] = new const char* [16]{"   1", "   2", "   3", "   4", "   5", "   6", "   7", "   8", "   9", "  10", "  11", "  12", "  13", "  14", "  15", "  16"};
 
   nValues[SOUND] = 3;
   keyString[SOUND] = "Snd ";
-  valueString[SOUND] = new char* [3]{"Hi", "Lo", "OFF"};
+  valueString[SOUND] = new const char* [3]{"Hi", "Lo", "OFF"};
 
   nValues[LOW_POWER] = 2;
   keyString[LOW_POWER] = "Lo P";
-  valueString[LOW_POWER] = new char* [2]{"OFF", "On"};
+  valueString[LOW_POWER] = new const char* [2]{"OFF", "On"};
 
 }
 
@@ -255,6 +255,7 @@ boolean Config::wireConflict(uint8_t key, int value) {
     case PAUSE_WIRE:
     return ((get(DET_WIRE) == value) || (get(DEFUSE_WIRE) == value) || (get(SPEEDUP_WIRE) == value));
   }
+  return false;
 }
 
 void Config::confirmSetting() {
@@ -266,11 +267,11 @@ void Config::confirmSetting() {
   }
 }
 
-char * Config::getKeyString(uint8_t key) {
+const char * Config::getKeyString(uint8_t key) {
 	return keyString[key];
 }
 
-char * Config::getValueString(uint8_t key, int value) {
+const char * Config::getValueString(uint8_t key, int value) {
 	return valueString[key][value];
 }
 
@@ -403,16 +404,3 @@ void Config::reset() {
   setDefaults();
   save();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

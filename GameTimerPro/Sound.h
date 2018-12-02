@@ -13,4 +13,4 @@ extern void beep(int frequency, int duration, int vol);
 extern boolean ringAlarm();
 extern void setSoundLevel(int value);
 
-#endif SOUND_H
+#endif

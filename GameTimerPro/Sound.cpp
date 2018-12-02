@@ -37,7 +37,7 @@ void beep(int frequency, int duration, int vol) {
   frequency = 1000000 / frequency;
   int duty = frequency / volume_div[vol-1];
   unsigned long start = millis();
-  while ((millis() - start) < duration) {
+  while ((int)(millis() - start) < duration) {
     if (sound) PORTD |= (1 << 2);
     delayMicroseconds(duty);
     if (sound) PORTD &= ~(1 << 2);
@@ -51,7 +51,7 @@ boolean ringAlarm() {
   uint8_t volume_div[] = { 255, 200, 150, 125, 100, 87, 50, 33, 22, 2 };
   uint16_t frequency = 1000000 / 2500;
   uint16_t duty = frequency / volume_div[vol-1];
-  uint16_t duration = 350;  
+  uint16_t duration = 350;
   uint16_t pauseDuration = 150;
 
   while (true) {

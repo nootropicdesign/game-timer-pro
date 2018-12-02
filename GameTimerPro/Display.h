@@ -27,7 +27,7 @@
 class Display {
  public:
   Display(void);
-  uint16_t buffer[8]; 
+  uint16_t buffer[8];
   void begin();
   void init(uint8_t a);
 
@@ -42,7 +42,7 @@ class Display {
   void printNumShift(uint16_t n); // set rightmost digit to number, scrolling current display to the left
   void printCharShift(uint8_t c); // set rightmost digit to char, scrolling current display to the left
   void printNum(uint16_t n, boolean leadingZeros = false); // print number to the display.
-  void printString(char *s); // print 4-character string to display
+  void printString(const char *s); // print 4-character string to display
   void printStringScroll(char *s, uint16_t delay); // print a string that scrolls from right to left with specified delay
   void printTime(long t); // t expressed as seconds of the day
   void printCountdown(int t); // t expressed as seconds
@@ -51,7 +51,7 @@ class Display {
   void setLED(uint8_t led, uint8_t val);
   void fadeIn(int d);
   void fadeOut(int d);
-    
+
  private:
   uint8_t readFlag();
   void error(uint16_t n);
@@ -64,4 +64,3 @@ class Display {
 extern Display display;
 
 #endif // DISPLAY_H
-

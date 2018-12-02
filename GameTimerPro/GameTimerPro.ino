@@ -323,6 +323,7 @@ boolean wireConflict(byte key, int value) {
     case PAUSE_WIRE:
     return ((detWire == value) || (defuseWire == value) || (speedupWire == value));
   }
+  return false;
 }
 
 int getRandomWire(byte key) {

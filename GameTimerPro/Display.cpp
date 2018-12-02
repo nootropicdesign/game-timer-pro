@@ -32,19 +32,19 @@ static const uint8_t chars[] = {
   0x00, // space
   0x00, //
   0x22, // "
-  0x00, // 
-  0x00, // 
-  0x00, // 
-  0x00, // 
+  0x00, //
+  0x00, //
+  0x00, //
+  0x00, //
   0x02, // '
-  0x00, // 
-  0x00, // 
-  0x00, // 
-  0x00, // 
-  0x00, // 
+  0x00, //
+  0x00, //
+  0x00, //
+  0x00, //
+  0x00, //
   0x40, // -
-  0x00, // 
-  0x00, // 
+  0x00, //
+  0x00, //
   0x3F, // 0
   0x06, // 1
   0x5B, // 2
@@ -55,76 +55,76 @@ static const uint8_t chars[] = {
   0x07, // 7
   0x7F, // 8
   0x6F, // 9
-  0x00, // 
-  0x00, // 
-  0x00, // 
+  0x00, //
+  0x00, //
+  0x00, //
   0x48, // =
-  0x00, // 
-  0x00, // 
-  0x00, // 
+  0x00, //
+  0x00, //
+  0x00, //
   0x77, // A
-  0x00, // 
+  0x00, //
   0x39, // C
-  0x00, // 
+  0x00, //
   0x79, // E
   0x71, // F
   0x3D, // G
   0x76, // H
   0x06, // I
   0x0E, // J
-  0x00, // 
+  0x00, //
   0x38, // L
-  0x00, // 
+  0x00, //
   0x37, // N
   0x3F, // O
   0x73, // P
-  0x00, // 
-  0x00, // 
+  0x00, //
+  0x00, //
   0x6D, // S
-  0x00, // 
+  0x00, //
   0x3E, // U
-  0x00, // 
-  0x00, // 
-  0x00, // 
-  0x00, // 
-  0x00, // 
   0x00, //
-  0x00, // 
   0x00, //
-  0x00, // 
+  0x00, //
+  0x00, //
+  0x00, //
+  0x00, //
+  0x00, //
+  0x00, //
+  0x00, //
   0x08, // _
-  0x00, // 
+  0x00, //
   0x5F, // a
   0x7C, // b
   0x58, // c
   0x5E, // d
-  0x00, // 
-  0x00, // 
-  0x00, // 
+  0x00, //
+  0x00, //
+  0x00, //
   0x74, // h
   0x10, // i
-  0x00, // 
-  0x00, // 
+  0x00, //
+  0x00, //
   0x30, // l
-  0x00, // 
+  0x00, //
   0x54, // n
   0x5C, // o
-  0x00, // 
-  0x00, // 
+  0x00, //
+  0x00, //
   0x50, // r
-  0x00, // 
+  0x00, //
   0x78, // t
   0x1C, // u
-  0x00, // 
-  0x00, // 
-  0x00, // 
+  0x00, //
+  0x00, //
+  0x00, //
   0x6E, // y
-  0x00, // 
-  0x00, // 
+  0x00, //
+  0x00, //
   0x06, // |
-  0x00, // 
-  0x00, // 
-  0x00  // 
+  0x00, //
+  0x00, //
+  0x00  //
 };
 
 
@@ -135,9 +135,9 @@ Display::Display(void) {
 void Display::setBlinkRate(uint8_t rate) {
   if (rate > HT16K33_BLINK_HALFHZ) {
     rate = HT16K33_BLINK_OFF;
-  } 
+  }
   Wire.beginTransmission(I2CADDR);
-  Wire.write(HT16K33_DISPLAY_CMD | HT16K33_DISPLAY_ON | (rate << 1)); 
+  Wire.write(HT16K33_DISPLAY_CMD | HT16K33_DISPLAY_ON | (rate << 1));
   Wire.endTransmission();
 }
 
@@ -179,10 +179,10 @@ void Display::update(void) {
   Wire.beginTransmission(I2CADDR);
   Wire.write((uint8_t)0x00); // start at address $00
 
-  //Wire.write(buffer[0] & 0xFF);    
+  //Wire.write(buffer[0] & 0xFF);
   //Wire.write(buffer[0] >> 8);
   for (uint8_t i=0; i<8; i++) {
-    Wire.write((buffer[i] & 0xFF) | colonMask);    
+    Wire.write((buffer[i] & 0xFF) | colonMask);
     Wire.write((buffer[i] >> 8));
   }
   Wire.endTransmission();
@@ -277,7 +277,7 @@ void Display::printNum(uint16_t n, boolean leadingZeros) {
 // print a time t expressed as seconds of the day
 void Display::printTime(long t) {
   setDisplayColon(true);
-  boolean leadingZero = true;    
+  boolean leadingZero = true;
   byte hours = t / 3600;
   if (config.get(CLOCK24HR) == CLOCK24HR_OFF) {
     leadingZero = false;
@@ -296,7 +296,7 @@ void Display::printCountdown(int t) {
   printNum(((t / 60)*100) + (t % 60), true);
 }
 
-void Display::printString(char *s) {
+void Display::printString(const char *s) {
   uint8_t len = strlen(s);
   if (len > 4) {
     printString("Err3");
@@ -358,5 +358,3 @@ void Display::fadeOut(int d) {
     delay(d);
   }
 }
-
-

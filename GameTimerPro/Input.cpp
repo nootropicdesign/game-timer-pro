@@ -65,7 +65,7 @@ boolean buttonHeld(byte button, int n) {
       buttonState[button] = LOW;
       return false;
     }
-    if ((millis() - buttonChange[button]) >= n) {
+    if ((int)(millis() - buttonChange[button]) >= n) {
       // the button has been pressed for over n milliseconds.
       // update the state change time even though the state hasn't changed.
       // we update the state change time so we can start the counting over
@@ -317,5 +317,3 @@ int inputWireOrder() {
   }
   return (digits[0] * 1000) + (digits[1] * 100) + (digits[2] * 10) + digits[3];
 }
-
-

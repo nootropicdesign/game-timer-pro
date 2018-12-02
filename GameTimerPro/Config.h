@@ -80,8 +80,8 @@ class Config {
   void setDefaults();
   int get(uint8_t key);
   void set(uint8_t key, int value);
-  char *getKeyString(uint8_t key);
-  char *getValueString(uint8_t key, int value);
+  const char *getKeyString(uint8_t key);
+  const char *getValueString(uint8_t key, int value);
   uint8_t nValues[N_MENU];
   void configure(void);
   void load(void);
@@ -92,8 +92,8 @@ class Config {
 
  private:
   int values[N_CONFIG];
-  char *keyString[N_MENU];
-  char **valueString[N_MENU];
+  const char *keyString[N_MENU];
+  const char **valueString[N_MENU];
   boolean wireConflict(uint8_t key, int value);
   void demoSound(int value);
   void confirmSetting();
