@@ -1,6 +1,8 @@
+//*************************************THIS CODE LAST MODIFIED 12-27-18 TO COMPLETE THE LIGHT DETONATION CYCLES*********************************************************//
+//***https://learn.adafruit.com/adafruit-neopixel-uberguide/arduino-library-use
 
 #include <Wire.h>
-
+#include <Adafruit_NeoPixel.h>
 #include "Hardware.h"
 #include "Config.h"
 #include "Display.h"
@@ -10,8 +12,10 @@
 #include "Sound.h"
 #include "LowPower.h"
 
-byte leds[] = {LED1, LED2, LED3, LED4};
-int volume = 10;
+byte leds[] = {LED1, LED2, LED3, LED4}; //*********// These are LEDs on the control board itself
+int volume = 255;
+
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(14, NEOPIXEL_PIN); //********// (14 NeoPixels, Controlled through PIN7)
 
 Config config = Config();
 Display display = Display();
@@ -32,13 +36,14 @@ int defuseWire;
 int speedupWire;
 int pauseWire;
 
+uint32_t color = strip.Color(250, 250, 0); //********// Change RGB color value here
+
 void setup() {
   Serial.begin(115200);
   display.begin();
   ir.begin();
 
   pinMode(SPEAKER_PIN, OUTPUT);
-  pinMode(DET_TRIGGER_PIN, OUTPUT);
   pinMode(DEFUSE_TRIGGER_PIN, OUTPUT);
   pinMode(BUTTON_LEFT_PIN, INPUT_PULLUP);
   pinMode(BUTTON_SELECT_PIN, INPUT_PULLUP);
@@ -50,25 +55,27 @@ void setup() {
   pinMode(WIRE4_PIN, INPUT_PULLUP);
 
   digitalWrite(SPEAKER_PIN, LOW);
-  digitalWrite(DET_TRIGGER_PIN, LOW);
   digitalWrite(DEFUSE_TRIGGER_PIN, LOW);
+
+  strip.begin(); //INITIALIZE NEOPIXELS FOR USE
+  strip.show(); //SET ALL NEOPIXELS TO OFF BY DEFAULT
 
   if (!((buttonPressed(BUTTON_LEFT)) && (buttonPressed(BUTTON_RIGHT)))) {
     config.load();
     if (!config.valid()) {
       config.reset();
-      beep(2000, 20, 10);
+      beep(2000, 20, 10); //FREQUENCY, DURATION, VOLUME
       delay(50);
-      beep(2000, 20, 10);
+      beep(2000, 20, 10); //FREQUENCY, DURATION, VOLUME
       delay(50);
-      beep(2000, 20, 10);
+      beep(2000, 20, 10); //FREQUENCY, DURATION, VOLUME
     }
   } else {
     // Factory reset
     config.reset();
-    beep(2000, 20, 10);
+    beep(2000, 20, 10); //FREQUENCY, DURATION, VOLUME
     delay(50);
-    beep(2000, 20, 10);
+    beep(2000, 20, 10); //FREQUENCY, DURATION, VOLUME
     while ((buttonPressed(BUTTON_LEFT)) || (buttonPressed(BUTTON_RIGHT)));
   }
 
@@ -608,12 +615,27 @@ void detonate() {
   triggerStart = millis();
   triggerStop = triggerStart + (config.get(DET_TRIGGER_SEC) * 1000UL);
   if (triggerStop > triggerStart) {
-    digitalWrite(DET_TRIGGER_PIN, HIGH);
-  }
+    //****************************DETONATION FUNCTION**************************************************************//
+    theaterChase(strip.Color(255, 255, 0), 70); //YELLOW //(GREEN, RED, BLUE), SECOND VARIABLE IS SPEED OF CYCLE - HIGHER NUMBER IS SLOWER
+    theaterChase(strip.Color(69, 255, 0), 55); //ORANGE  
+    theaterChase(strip.Color(0, 255, 0), 40); //RED
+    digitalWrite(DEFUSE_TRIGGER_PIN, HIGH); //THIS LINE TRIGGERS THE 108Db SIREN
+    for(int j=0; j<60; j++) { //j IS EQUIVALENT TO ROUGHLY 1 SECOND, j=300 IS ROUGHLY 5 MINUTES
+      colorWipe(strip.Color(0, 255, 0), 9); //RED (255,0,0)=GREEN, (0,255,0)=RED, (0,0,255)=BLUE, https://www.rapidtables.com/web/color/RGB_Color.html
+      colorWipe(strip.Color(69, 255, 0), 4); //ORANGE  ***SECOND VARIABLE CHANGES HOW QUICKLY CYCLE WIPES***
+      colorWipe(strip.Color(220, 220, 220), 2); //OFF-WHITE 
+      colorWipe(strip.Color(0, 255, 0), 6); //RED
+      colorWipe(strip.Color(69, 255, 0), 3); //ORANGE
+      colorWipe(strip.Color(192, 255, 203), 1); //PINK
+      colorWipe(strip.Color(0, 255, 0), 3); //RED
+      colorWipe(strip.Color(69, 255, 0), 2); //ORANGE
+      colorWipe(strip.Color(255, 255, 255), 1); //WHITE  ***THIS IS THE COLOR THAT WILL HOLD WHILE THE BOARD RESETS IN THE LOOP BELOW***
+      }
+    }
   display.setDisplayColon(false);
   for(int i=0;i<n;i++) {
     if (millis() >= triggerStop) {
-      digitalWrite(DET_TRIGGER_PIN, LOW);
+      digitalWrite(DEFUSE_TRIGGER_PIN, LOW);
     }
     display.setDigitRaw(1, random(255));
     display.setDigitRaw(2, random(255));
@@ -622,12 +644,10 @@ void detonate() {
     display.setDigitRaw(0, random(255) << 8);
     display.update();
     for (int j = 0; j < 5; j++) {
-      if (millis() >= triggerStop) {
-        digitalWrite(DET_TRIGGER_PIN, LOW);
-      }
       beep(random(100, 300), 10, 10);
     }
   }
+  theaterChase(strip.Color(0, 0, 0), 0); //***********FUNCTION CALL FOR BLANKING OUT NEOPIXELS AT THE END OF DETONATION***********//
   display.clear();
   for(byte i=0;i<4;i++) {
     display.setLED(leds[i], LOW);
@@ -639,20 +659,21 @@ void detonate() {
   display.setLED(LED2, HIGH);
   // reset countdown
   while (true) {
-    if (millis() >= triggerStop) {
-      digitalWrite(DET_TRIGGER_PIN, LOW);
-    }
     // wait for button press or IR select command
+    colorWipe(strip.Color(0, 255, 0), 9); //HOLD RED PATTERN UNTIL BUTTON OR IR RESET
     irCommand = ir.getIRCommand();
-    if ((irCommand == IR_SELECT) || (irCommand == IR_SELECT2)) break;
-    if (buttonPressed(BUTTON_DET)) break;
+    if (irCommand == IR_SELECT) {
+      theaterChase(strip.Color(0, 0, 0), 0); //BLANK OUT NEOPIXELS ON IR SELECT
+      break;
+    }  
+    if (buttonPressed(BUTTON_DET)) {
+      theaterChase(strip.Color(0, 0, 0), 0); //BLANK OUT NEOPIXELS ON IR SELECT
+      break;
+    }
     delay(20);
   }
   delay(20);
   while (true) {
-    if (millis() >= triggerStop) {
-      digitalWrite(DET_TRIGGER_PIN, LOW);
-    }
     // wait for button release
     if ((irCommand == IR_SELECT) || (irCommand == IR_SELECT2)) break; // remote was used
     if (!buttonPressed(BUTTON_DET)) break;
@@ -663,7 +684,7 @@ void detonate() {
   countdownSeconds = config.get(COUNTDOWN_DURATION);
 }
 
-void defused() {
+void defused() {  //********************************************DEFUSAL INSTRUCTIONS******************************************//
   unsigned long irCommand;
   unsigned long triggerStart;
   unsigned long triggerStop;
@@ -675,7 +696,11 @@ void defused() {
   triggerStart = millis();
   triggerStop = triggerStart + (config.get(DEFUSE_TRIGGER_SEC) * 1000UL);
   if (triggerStop > triggerStart) {
-    digitalWrite(DEFUSE_TRIGGER_PIN, HIGH);
+    for(int j=0; j<15; j++) { //EACH j EQUATES TO ROUGHLY 5.5sec, 5 MINUTES IS ROUGHLY j=55
+      theaterChase(strip.Color(255, 0, 0), 60); //GREEN(GREEN, RED, BLUE), SECOND VARIABLE IS SPEED OF CYCLE - HIGHER NUMBER IS SLOWER
+      theaterChase(strip.Color(255, 0, 128), 60); //BLUE GREEN
+      theaterChase(strip.Color(255, 128, 0), 60); //YELLOW GREEN
+    }
   }
   delay(50);
   for(byte i=0;i<4;i++) {
@@ -684,9 +709,6 @@ void defused() {
   int successCode = config.get(SUCCESS_CODE);
   if (successCode != UNSET) {
     for(byte i=0;i<50;i++) {
-      if (millis() >= triggerStop) {
-        digitalWrite(DEFUSE_TRIGGER_PIN, LOW);
-      }
       delay(20);
     }
     display.setDisplayColon(false);
@@ -704,27 +726,26 @@ void defused() {
   delay(250);
   display.setLED(LED2, HIGH);
   while (true) {
-    if (millis() >= triggerStop) {
-      digitalWrite(DEFUSE_TRIGGER_PIN, LOW);
-    }
-    // wait for button press or IR select command
+    colorWipe(strip.Color(255, 0, 0), 9); //HOLD GREEN PATTERN UNTIL BUTTON OR IR RESET
     irCommand = ir.getIRCommand();
-    if ((irCommand == IR_SELECT) || (irCommand == IR_SELECT2)) break;
-    if (buttonPressed(BUTTON_DET)) break;
+    if (irCommand == IR_SELECT) {
+      theaterChase(strip.Color(0, 0, 0), 0); //BLANK OUT NEOPIXELS ON IR SELECT
+      break;
+    }
+    if (buttonPressed(BUTTON_DET)) {
+      theaterChase(strip.Color(0, 0, 0), 0); //BLANK OUT NEOPIXELS ON BUTTON SELECT
+      break;
+    }
     delay(20);
   }
   delay(20);
   while (true) {
-    if (millis() >= triggerStop) {
-      digitalWrite(DEFUSE_TRIGGER_PIN, LOW);
-    }
     // wait for button release
     if ((irCommand == IR_SELECT) || (irCommand == IR_SELECT2)) break; // from last check
     if (!buttonPressed(BUTTON_DET)) break;
     delay(20);
   }
   display.setLED(LED2, LOW);
-  digitalWrite(DEFUSE_TRIGGER_PIN, LOW);
   countdownSeconds = config.get(COUNTDOWN_DURATION);
 }
 
@@ -742,6 +763,28 @@ void configure() {
   }
 }
 
+void colorWipe(uint32_t c, uint8_t wait) { //********FILLS PIXELS ONE AFTER ANOTHER WITH PASSED COLOR********//
+  for(uint16_t i=0; i<30; i++) { //'i' VALUE CHANGES SPEED OF WIPE ACTION
+    strip.setPixelColor(i, c);
+    strip.show();
+    delay(wait);
+  }
+}
+
+void theaterChase(uint32_t c, uint8_t wait) { //********THEATER CHASE FUNCTION********//
+  for (int j=0; j<10; j++) { //'j' VALUE CHANGES HOW LONG THE FUNCTION CYCLES FOR 
+    for (int q=0; q<3; q++) { 
+      for (uint16_t i=0; i<strip.numPixels(); i=i+3) {
+        strip.setPixelColor(i+q, c); //turns every 3rd pixel on
+      }
+      strip.show();
+      delay(wait);
+      for (uint16_t i=0; i<strip.numPixels(); i=i+3) {
+        strip.setPixelColor(i+q, 0); //turns every 3rd pixel off
+      }
+    }
+  }
+}
 
 // Timer 1 interrupt.  This executes every second.
 ISR(TIMER1_OVF_vect) {
