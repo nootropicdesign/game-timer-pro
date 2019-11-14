@@ -37,7 +37,6 @@ int speedupWire;
 int pauseWire;
 
 uint32_t color = strip.Color(250, 250, 0); //********// Change RGB color value here
-//int sine[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9 }; //********//
 
 void setup() {
   Serial.begin(115200);
@@ -45,7 +44,6 @@ void setup() {
   ir.begin();
 
   pinMode(SPEAKER_PIN, OUTPUT);
-  pinMode(DET_TRIGGER_PIN, OUTPUT);
   pinMode(DEFUSE_TRIGGER_PIN, OUTPUT);
   pinMode(BUTTON_LEFT_PIN, INPUT_PULLUP);
   pinMode(BUTTON_SELECT_PIN, INPUT_PULLUP);
@@ -57,7 +55,6 @@ void setup() {
   pinMode(WIRE4_PIN, INPUT_PULLUP);
 
   digitalWrite(SPEAKER_PIN, LOW);
-  digitalWrite(DET_TRIGGER_PIN, LOW);
   digitalWrite(DEFUSE_TRIGGER_PIN, LOW);
 
   strip.begin(); //INITIALIZE NEOPIXELS FOR USE
@@ -618,7 +615,7 @@ void detonate() {
   triggerStart = millis();
   triggerStop = triggerStart + (config.get(DET_TRIGGER_SEC) * 1000UL);
   if (triggerStop > triggerStart) {
-    //digitalWrite(PIN8, HIGH); //****************************DETONATION FUNCTION**************************************************************//
+    //****************************DETONATION FUNCTION**************************************************************//
     theaterChase(strip.Color(255, 255, 0), 70); //YELLOW //(GREEN, RED, BLUE), SECOND VARIABLE IS SPEED OF CYCLE - HIGHER NUMBER IS SLOWER
     theaterChase(strip.Color(69, 255, 0), 55); //ORANGE  
     theaterChase(strip.Color(0, 255, 0), 40); //RED
@@ -639,7 +636,6 @@ void detonate() {
   for(int i=0;i<n;i++) {
     if (millis() >= triggerStop) {
       digitalWrite(DEFUSE_TRIGGER_PIN, LOW);
-      //digitalWrite(DET_TRIGGER_PIN, LOW);
     }
     display.setDigitRaw(1, random(255));
     display.setDigitRaw(2, random(255));
@@ -648,9 +644,6 @@ void detonate() {
     display.setDigitRaw(0, random(255) << 8);
     display.update();
     for (int j = 0; j < 5; j++) {
-      //if (millis() >= triggerStop) {
-      //  digitalWrite(DET_TRIGGER_PIN, LOW);
-      //}
       beep(random(100, 300), 10, 10);
     }
   }
@@ -666,9 +659,6 @@ void detonate() {
   display.setLED(LED2, HIGH);
   // reset countdown
   while (true) {
-    //if (millis() >= triggerStop) {
-    //  digitalWrite(DET_TRIGGER_PIN, LOW);
-    //}
     // wait for button press or IR select command
     colorWipe(strip.Color(0, 255, 0), 9); //HOLD RED PATTERN UNTIL BUTTON OR IR RESET
     irCommand = ir.getIRCommand();
@@ -684,9 +674,6 @@ void detonate() {
   }
   delay(20);
   while (true) {
-    //if (millis() >= triggerStop) {
-    //  digitalWrite(DET_TRIGGER_PIN, LOW);
-    //}
     // wait for button release
     if ((irCommand == IR_SELECT) || (irCommand == IR_SELECT2)) break; // remote was used
     if (!buttonPressed(BUTTON_DET)) break;
@@ -709,7 +696,6 @@ void defused() {  //********************************************DEFUSAL INSTRUCT
   triggerStart = millis();
   triggerStop = triggerStart + (config.get(DEFUSE_TRIGGER_SEC) * 1000UL);
   if (triggerStop > triggerStart) {
-    //digitalWrite(DEFUSE_TRIGGER_PIN, HIGH);
     for(int j=0; j<15; j++) { //EACH j EQUATES TO ROUGHLY 5.5sec, 5 MINUTES IS ROUGHLY j=55
       theaterChase(strip.Color(255, 0, 0), 60); //GREEN(GREEN, RED, BLUE), SECOND VARIABLE IS SPEED OF CYCLE - HIGHER NUMBER IS SLOWER
       theaterChase(strip.Color(255, 0, 128), 60); //BLUE GREEN
@@ -723,9 +709,6 @@ void defused() {  //********************************************DEFUSAL INSTRUCT
   int successCode = config.get(SUCCESS_CODE);
   if (successCode != UNSET) {
     for(byte i=0;i<50;i++) {
-      //if (millis() >= triggerStop) {
-      //  digitalWrite(DEFUSE_TRIGGER_PIN, LOW);
-      //}
       delay(20);
     }
     display.setDisplayColon(false);
@@ -743,9 +726,6 @@ void defused() {  //********************************************DEFUSAL INSTRUCT
   delay(250);
   display.setLED(LED2, HIGH);
   while (true) {
-    //if (millis() >= triggerStop) {
-    //  digitalWrite(DEFUSE_TRIGGER_PIN, LOW);
-    //}
     colorWipe(strip.Color(255, 0, 0), 9); //HOLD GREEN PATTERN UNTIL BUTTON OR IR RESET
     irCommand = ir.getIRCommand();
     if (irCommand == IR_SELECT) {
@@ -760,16 +740,12 @@ void defused() {  //********************************************DEFUSAL INSTRUCT
   }
   delay(20);
   while (true) {
-    //if (millis() >= triggerStop) {
-    //  digitalWrite(DEFUSE_TRIGGER_PIN, LOW);
-    //}
     // wait for button release
     if ((irCommand == IR_SELECT) || (irCommand == IR_SELECT2)) break; // from last check
     if (!buttonPressed(BUTTON_DET)) break;
     delay(20);
   }
   display.setLED(LED2, LOW);
-  //digitalWrite(DEFUSE_TRIGGER_PIN, LOW);
   countdownSeconds = config.get(COUNTDOWN_DURATION);
 }
 
