@@ -30,6 +30,17 @@
 #define IR_RIGHT2 0x00FF7A85
 #define IR_SELECT2 0x00FF18E7
 
+// Adafruit 389
+#define IR_POWER3 0x00
+#define IR_A3 0x00FD08F7
+#define IR_B3 0x00FD8877
+#define IR_C3 0x00FD48B7
+#define IR_UP3 0x00FDA05F
+#define IR_DOWN3 0x00FDB04F
+#define IR_LEFT3 0x00FD10EF
+#define IR_RIGHT3 0x00FD50AF
+#define IR_SELECT3 0x00FD906F
+
 //------------------------------------------------------------------------------
 // This handles definition and access to global variables
 //

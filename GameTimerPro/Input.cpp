@@ -247,6 +247,10 @@ int inputWireOrder() {
   int toggleCount = 0;
   uint8_t currentDigit = 1;
   uint8_t digits[4]; // left to right
+  digits[0] = 0;
+  digits[1] = 0;
+  digits[2] = 0;
+  digits[3] = 0;
   int currentValue = UNSET;
   display.setDisplayColon(false);
   display.printString("____");
