@@ -165,8 +165,12 @@ void loop() {
 
 void getTimerInput() {
   unsigned long irCommand = ir.getIRCommand();
-
-  if ((buttonPressedNew(BUTTON_LEFT)) || (buttonHeld(BUTTON_LEFT, 150)) || (irCommand == IR_LEFT) || (irCommand == IR_LEFT2) || (irCommand == IR_LEFT3)) {
+  /*
+  if (irCommand != 0) {
+    Serial.println(irCommand, 16);
+  }
+  */
+  if ((buttonPressedNew(BUTTON_LEFT)) || (buttonHeld(BUTTON_LEFT, 150)) || (irCommand == IR_LEFT) || (irCommand == IR_LEFT2) || (irCommand == IR_LEFT3) || (irCommand == IR_LEFT4)) {
     if ((buttonPressed(BUTTON_LEFT)) && (millis() - getLastPress(BUTTON_LEFT) > 2000)) {
       while (buttonPressed(BUTTON_LEFT)) {
         if (countdownSeconds > 1) countdownSeconds--;
@@ -183,7 +187,7 @@ void getTimerInput() {
     configure();
     updateDisplayFlag = true;
   }
-  if ((buttonPressedNew(BUTTON_RIGHT)) || (buttonHeld(BUTTON_RIGHT, 150)) || (irCommand == IR_RIGHT) || (irCommand == IR_RIGHT2) || (irCommand == IR_RIGHT3)) {
+  if ((buttonPressedNew(BUTTON_RIGHT)) || (buttonHeld(BUTTON_RIGHT, 150)) || (irCommand == IR_RIGHT) || (irCommand == IR_RIGHT2) || (irCommand == IR_RIGHT3) || (irCommand == IR_RIGHT4)) {
     if ((buttonPressed(BUTTON_RIGHT)) && (millis() - getLastPress(BUTTON_RIGHT) > 2000)) {
       while (buttonPressed(BUTTON_RIGHT)) {
         if (countdownSeconds < 5999) countdownSeconds++;
@@ -258,7 +262,7 @@ void getClockInput() {
 }
 
 void checkDetButton(unsigned long irCommand) {
-  if ((buttonPressedNew(BUTTON_DET)) || (irCommand == IR_SELECT) || (irCommand == IR_SELECT2) || (irCommand == IR_SELECT3)) {
+  if ((buttonPressedNew(BUTTON_DET)) || (irCommand == IR_SELECT) || (irCommand == IR_SELECT2) || (irCommand == IR_SELECT3) || (irCommand == IR_SELECT4)) {
     for(byte i=0;i<4;i++) {
       display.setLED(leds[i], HIGH);
     }
@@ -535,15 +539,15 @@ void countdown() {
       } // if defuse wire order
 
       irCommand = ir.getIRCommand();
-      if ((irCommand == IR_UP) || (irCommand == IR_UP2) || (irCommand == IR_UP3)) {
+      if ((irCommand == IR_UP) || (irCommand == IR_UP2) || (irCommand == IR_UP3) || (irCommand == IR_UP4)) {
         doubleSpeed = true;
       }
-      if ((irCommand == IR_DOWN) || (irCommand == IR_DOWN2) || (irCommand == IR_DOWN3)) {
+      if ((irCommand == IR_DOWN) || (irCommand == IR_DOWN2) || (irCommand == IR_DOWN3) || (irCommand == IR_DOWN4)) {
         doubleSpeed = false;
       }
 
       // pause
-      if ((irCommand == IR_A) || (irCommand == IR_A2) || (irCommand == IR_A3)) {
+      if ((irCommand == IR_A) || (irCommand == IR_A2) || (irCommand == IR_A3) || (irCommand == IR_A4)) {
         countdownRunning = false;
         beep(4500, 80);
         display.setLED(LED1, LOW);
@@ -551,19 +555,19 @@ void countdown() {
         while (true) {
           delay(20);
           irCommand = ir.getIRCommand();
-          if ((irCommand == IR_A) || (irCommand == IR_A2) || (irCommand == IR_A3)) break;
+          if ((irCommand == IR_A) || (irCommand == IR_A2) || (irCommand == IR_A3) || (irCommand == IR_A4)) break;
         }
         countdownRunning = true;
       }
 
       // defuse
-      if ((irCommand == IR_B) || (irCommand == IR_B2) || (irCommand == IR_B3)) {
+      if ((irCommand == IR_B) || (irCommand == IR_B2) || (irCommand == IR_B3) || (irCommand == IR_B4)) {
         isDefused = true;
         break;
       }
 
       // detonate
-      if ((irCommand == IR_C) || (irCommand == IR_C2) || (irCommand == IR_C3)) {
+      if ((irCommand == IR_C) || (irCommand == IR_C2) || (irCommand == IR_C3) || (irCommand == IR_C4)) {
         countdownRunning = false;
         countdownSeconds = 0;
         break;
@@ -644,7 +648,7 @@ void detonate() {
     }
     // wait for button press or IR select command
     irCommand = ir.getIRCommand();
-    if ((irCommand == IR_SELECT) || (irCommand == IR_SELECT2) || (irCommand == IR_SELECT3)) break;
+    if ((irCommand == IR_SELECT) || (irCommand == IR_SELECT2) || (irCommand == IR_SELECT3) || (irCommand == IR_SELECT4)) break;
     if (buttonPressed(BUTTON_DET)) break;
     delay(20);
   }
@@ -654,7 +658,7 @@ void detonate() {
       digitalWrite(DET_TRIGGER_PIN, LOW);
     }
     // wait for button release
-    if ((irCommand == IR_SELECT) || (irCommand == IR_SELECT2) || (irCommand == IR_SELECT3)) break; // remote was used
+    if ((irCommand == IR_SELECT) || (irCommand == IR_SELECT2) || (irCommand == IR_SELECT3) || (irCommand == IR_SELECT4)) break; // remote was used
     if (!buttonPressed(BUTTON_DET)) break;
     delay(20);
   }
@@ -709,7 +713,7 @@ void defused() {
     }
     // wait for button press or IR select command
     irCommand = ir.getIRCommand();
-    if ((irCommand == IR_SELECT) || (irCommand == IR_SELECT2) || (irCommand == IR_SELECT3)) break;
+    if ((irCommand == IR_SELECT) || (irCommand == IR_SELECT2) || (irCommand == IR_SELECT3) || (irCommand == IR_SELECT4)) break;
     if (buttonPressed(BUTTON_DET)) break;
     delay(20);
   }
@@ -719,7 +723,7 @@ void defused() {
       digitalWrite(DEFUSE_TRIGGER_PIN, LOW);
     }
     // wait for button release
-    if ((irCommand == IR_SELECT) || (irCommand == IR_SELECT2) || (irCommand == IR_SELECT3)) break; // from last check
+    if ((irCommand == IR_SELECT) || (irCommand == IR_SELECT2) || (irCommand == IR_SELECT3) || (irCommand == IR_SELECT4)) break; // from last check
     if (!buttonPressed(BUTTON_DET)) break;
     delay(20);
   }
